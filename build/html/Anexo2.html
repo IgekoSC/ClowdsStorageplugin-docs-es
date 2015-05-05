@@ -1,0 +1,278 @@
+
+
+<!DOCTYPE html>
+<!--[if IE 8]><html class="no-js lt-ie9" lang="en" > <![endif]-->
+<!--[if gt IE 8]><!--> <html class="no-js" lang="en" > <!--<![endif]-->
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  
+  <title>Anexo 2. Clase principal: campos y métodos útiles &mdash; documentación de ClowdsStoragePlugin - alpha</title>
+  
+
+  
+  
+
+  
+  <link href='https://fonts.googleapis.com/css?family=Lato:400,700,400italic,700italic|Roboto+Slab:400,700|Inconsolata:400,700&subset=latin,cyrillic' rel='stylesheet' type='text/css'>
+
+  
+  
+    
+
+  
+
+  
+  
+    <link rel="stylesheet" href="_static/css/theme.css" type="text/css" />
+  
+
+  
+
+  
+    <link rel="top" title="documentación de ClowdsStoragePlugin - alpha" href="index.html"/>
+        <link rel="prev" title="Anexo 1. Clases recomendables" href="Anexo1.html"/> 
+
+  
+  <script src="https://cdnjs.cloudflare.com/ajax/libs/modernizr/2.6.2/modernizr.min.js"></script>
+
+</head>
+
+<body class="wy-body-for-nav" role="document">
+
+  <div class="wy-grid-for-nav">
+
+    
+    <nav data-toggle="wy-nav-shift" class="wy-nav-side">
+      <div class="wy-side-nav-search">
+        
+          <a href="index.html" class="fa fa-home"> ClowdsStoragePlugin</a>
+        
+        
+<div role="search">
+  <form id="rtd-search-form" class="wy-form" action="search.html" method="get">
+    <input type="text" name="q" placeholder="Search docs" />
+    <input type="hidden" name="check_keywords" value="yes" />
+    <input type="hidden" name="area" value="default" />
+  </form>
+</div>
+      </div>
+
+      <div class="wy-menu wy-menu-vertical" data-spy="affix" role="navigation" aria-label="main navigation">
+        
+          
+          
+              <ul class="current">
+<li class="toctree-l1"><a class="reference internal" href="acercaDe.html">Bienvenido a la documentación de Clowds</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="acercaDe.html#para-empezar-bien">Para empezar bien..</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Advertencia.html">Advertencias</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Advertencia.html#indicaciones-generales">Indicaciones Generales</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Lista-de-funciones.html">Lista de Funciones</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#getchanges">getChanges()</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#downloadfile-qstring-remotepath-qstring-localpath">downloadFile(QString remotePath, QString localPath)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#uploadfile-qstring-remotepath-qstring-localpath">uploadFile(QString remotePath, QString localPath)</a></li>
+</ul>
+</li>
+<li class="toctree-l1"><a class="reference internal" href="Anexo1.html">Anexo 1. Clases recomendables</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="Anexo1.html#clase-jsondata">Clase JsonData</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo1.html#clase-file">Clase File</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo1.html#clase-myo2">Clase MyO2</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo1.html#clase-change">Clase Change</a></li>
+</ul>
+</li>
+<li class="toctree-l1 current"><a class="current reference internal" href="">Anexo 2. Clase principal: campos y métodos útiles</a><ul>
+<li class="toctree-l2"><a class="reference internal" href="#qstring-accesstoken">QString accessToken</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qstring-nextchanges">QString nextChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-allevents">QHash  allEvents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-mychanges">QHash &gt; myChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-filesbyid">QHash filesById</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-filesbypath">QHash filesByPath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-qlist-clouds">QHash&lt;QString, QList&lt;CloudS</a></li>
+</ul>
+</li>
+</ul>
+
+          
+        
+      </div>
+      &nbsp;
+    </nav>
+
+    <section data-toggle="wy-nav-shift" class="wy-nav-content-wrap">
+
+      
+      <nav class="wy-nav-top" role="navigation" aria-label="top navigation">
+        <i data-toggle="wy-nav-top" class="fa fa-bars"></i>
+        <a href="index.html">ClowdsStoragePlugin</a>
+      </nav>
+
+
+      
+      <div class="wy-nav-content">
+        <div class="rst-content">
+          <div role="navigation" aria-label="breadcrumbs navigation">
+  <ul class="wy-breadcrumbs">
+    <li><a href="index.html">Docs</a> &raquo;</li>
+      
+    <li>Anexo 2. Clase principal: campos y métodos útiles</li>
+      <li class="wy-breadcrumbs-aside">
+        
+          <a href="_sources/Anexo2.txt" rel="nofollow"> View page source</a>
+        
+      </li>
+  </ul>
+  <hr/>
+</div>
+          <div role="main" class="document">
+            
+  <div class="section" id="anexo-2-clase-principal-campos-y-metodos-utiles">
+<span id="id1"></span><h1>Anexo 2. Clase principal: campos y métodos útiles<a class="headerlink" href="#anexo-2-clase-principal-campos-y-metodos-utiles" title="Enlazar permanentemente con este título">¶</a></h1>
+<p><em>Nada de lo descrito en este Anexo es obligatorio para el funcionamiento
+de un Plug-in para Clowds. Son recomendaciones para facilitar su
+desarrollo.</em></p>
+<p><em>Se sugiere que el nombre de la clase principal guarde relación con el
+nombre del servicio que se va a implementar. De aquí en adelante la
+llamaremos myCloud.</em></p>
+<div class="section" id="qstring-accesstoken">
+<h2>QString accessToken<a class="headerlink" href="#qstring-accesstoken" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Access Token</strong></p>
+<p>En caso de utilizar OAuth2, puede ser útil guardar en esta variable el
+access token, ya que lo más normal es que tengas que introducirlo en
+cada petición HTTP para la autorización.</p>
+</div>
+<div class="section" id="qstring-nextchanges">
+<h2>QString nextChanges<a class="headerlink" href="#qstring-nextchanges" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Marcador de eventos</strong></p>
+<p>Generalmente el servicio debe ponernos a disposición alguna forma de
+recibir los cambios desde un punto en concreto. En esta variable debemos
+guardar cada vez que hay cambios la última posición de los mismos, para
+tener un orden. Este valor debe registrarse además en la base de datos
+para guardar la posición al cerrar el programa y la volvemos a recuperar
+de la base de datos al iniciar de nuevo el programa.</p>
+<p><code class="docutils literal"><span class="pre">resources_-&gt;settingsSetValue(QString</span> <span class="pre">key,</span> <span class="pre">QString</span> <span class="pre">value);</span></code></p>
+</div>
+<div class="section" id="qhash-allevents">
+<h2>QHash  allEvents<a class="headerlink" href="#qhash-allevents" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Lista de todos los eventos</strong></p>
+<p>En esta lista se almacenarán temporalmente (sin importar su contenido)
+todos los cambios que reciba Clowds en cada llamada a getChanges().</p>
+<ul class="simple">
+<li>Clave: ID del evento.</li>
+<li>Valor: Objeto Change, con el QJsonObject entero del evento.</li>
+</ul>
+</div>
+<div class="section" id="qhash-mychanges">
+<h2>QHash &gt; myChanges<a class="headerlink" href="#qhash-mychanges" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Lista de todos los cambios por cada archivo</strong></p>
+<p>Este QHash es el que retorna getChanges(). De todos los eventos de
+allEvents, solo se insertarán en myChanges aquellos eventos que sean
+cambios válidos para Clowds (Insertar, modificar, borrar, mover,
+restaurar de la papelera…). Eventos como marcar un archivo como
+favorito, añadir o quitar etiquetas, son eventos inservibles para
+Clowds.</p>
+<p>Guardará de cada archivo, un QMap con todos sus cambios, indexados por
+fecha (recomendable UNIX Time Stamp) para ordenarlos cronológicamente.</p>
+<div class="line-block">
+<div class="line">Clave: ID del archivo. Valor: QMap</div>
+<div class="line">{ Clave: Fecha (UNIX Time Stamp). Valor: Objeto Change. }.</div>
+</div>
+</div>
+<div class="section" id="qhash-filesbyid">
+<h2>QHash filesById<a class="headerlink" href="#qhash-filesbyid" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Lista de archivos indexada por ID</strong></p>
+<p>En este QHash se irán insertando los archivos que se vayan descargando o
+creando en la nube indexados por el ID del archivo, para poder tener un
+registro de todos los archivos que tenemos almacenados, y así poder
+conseguir información de cada uno de ellos en cualquier momento.</p>
+<ul class="simple">
+<li>Clave: ID del archivo [File::getId()]</li>
+<li>Valor: Archivo [File]</li>
+</ul>
+</div>
+<div class="section" id="qhash-filesbypath">
+<h2>QHash filesByPath<a class="headerlink" href="#qhash-filesbypath" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><strong>Lista de archivos indexada por la ruta del archivo</strong></p>
+<p>En este QHash se irán insertando los archivos que se vayan descargando o
+creando en la nube indexados por la ruta (path) del archivo, para poder
+tener un registro de todos los archivos que tenemos almacenados, y así
+poder conseguir información de cada uno de ellos en cualquier momento.</p>
+<ul class="simple">
+<li>Clave: Ruta del archivo [File::getPath()]</li>
+<li>Valor: Archivo [File]</li>
+</ul>
+</div>
+<div class="section" id="qhash-qstring-qlist-clouds">
+<h2>QHash&lt;QString, QList&lt;CloudS<a class="headerlink" href="#qhash-qstring-qlist-clouds" title="Enlazar permanentemente con este título">¶</a></h2>
+</div>
+</div>
+
+
+          </div>
+          <footer>
+  
+    <div class="rst-footer-buttons" role="navigation" aria-label="footer navigation">
+      
+      
+        <a href="Anexo1.html" class="btn btn-neutral" title="Anexo 1. Clases recomendables"><span class="fa fa-arrow-circle-left"></span> Previous</a>
+      
+    </div>
+  
+
+  <hr/>
+
+  <div role="contentinfo">
+    <p>
+        &copy; Copyright 2015, Igeko.
+    </p>
+  </div>
+
+  Built with <a href="http://sphinx-doc.org/">Sphinx</a> using a <a href="https://github.com/snide/sphinx_rtd_theme">theme</a> provided by <a href="https://readthedocs.org">Read the Docs</a>.
+  
+</footer>
+        </div>
+      </div>
+
+    </section>
+
+  </div>
+  
+
+
+  
+
+    <script type="text/javascript">
+        var DOCUMENTATION_OPTIONS = {
+            URL_ROOT:'./',
+            VERSION:'alpha',
+            COLLAPSE_INDEX:false,
+            FILE_SUFFIX:'.html',
+            HAS_SOURCE:  true
+        };
+    </script>
+      <script type="text/javascript" src="_static/jquery.js"></script>
+      <script type="text/javascript" src="_static/underscore.js"></script>
+      <script type="text/javascript" src="_static/doctools.js"></script>
+      <script type="text/javascript" src="_static/translations.js"></script>
+
+  
+
+  
+  
+    <script type="text/javascript" src="_static/js/theme.js"></script>
+  
+
+  
+  
+  <script type="text/javascript">
+      jQuery(function () {
+          SphinxRtdTheme.StickyNav.enable();
+      });
+  </script>
+   
+
+</body>
+</html>
