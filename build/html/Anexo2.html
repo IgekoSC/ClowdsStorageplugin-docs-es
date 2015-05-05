@@ -72,9 +72,14 @@
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Lista-de-funciones.html">Lista de Funciones</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#getchanges">getChanges()</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#downloadfile-qstring-remotepath-qstring-localpath">downloadFile(QString remotePath, QString localPath)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#uploadfile-qstring-remotepath-qstring-localpath">uploadFile(QString remotePath, QString localPath)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#getchanges">getChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#downloadfile">downloadFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#uploadfile">uploadFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#movefile">moveFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#movedir">moveDir</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#rmfile">rmFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#mkdir">mkDir</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Lista-de-funciones.html#rmdir">rmDir</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Anexo1.html">Anexo 1. Clases recomendables</a><ul>
@@ -87,11 +92,13 @@
 <li class="toctree-l1 current"><a class="current reference internal" href="">Anexo 2. Clase principal: campos y métodos útiles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="#qstring-accesstoken">QString accessToken</a></li>
 <li class="toctree-l2"><a class="reference internal" href="#qstring-nextchanges">QString nextChanges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qhash-allevents">QHash  allEvents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qhash-mychanges">QHash &gt; myChanges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qhash-filesbyid">QHash filesById</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qhash-filesbypath">QHash filesByPath</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-qlist-clouds">QHash&lt;QString, QList&lt;CloudS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-change-allevents">QHash&lt;QString, Change&gt; allEvents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-qmap-uint-change-mychanges">QHash&lt;QString, QMap&lt;uint, Change&gt; &gt; myChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-file-filesbyid">QHash&lt;QString, File&gt; filesById</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-file-filesbypath">QHash&lt;QString, File&gt; filesByPath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-qlist-cloudstoragechange-clowdschanges">QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#qhash-qstring-qlist-cloudstoragechange-clowdschangesbyid">QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChangesById</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#bool-updateparentsof-file-file">bool updateParentsOf(File &amp;file)</a></li>
 </ul>
 </li>
 </ul>
@@ -131,82 +138,195 @@
             
   <div class="section" id="anexo-2-clase-principal-campos-y-metodos-utiles">
 <span id="id1"></span><h1>Anexo 2. Clase principal: campos y métodos útiles<a class="headerlink" href="#anexo-2-clase-principal-campos-y-metodos-utiles" title="Enlazar permanentemente con este título">¶</a></h1>
-<p><em>Nada de lo descrito en este Anexo es obligatorio para el funcionamiento
-de un Plug-in para Clowds. Son recomendaciones para facilitar su
-desarrollo.</em></p>
-<p><em>Se sugiere que el nombre de la clase principal guarde relación con el
-nombre del servicio que se va a implementar. De aquí en adelante la
-llamaremos myCloud.</em></p>
+<p><em>Nada de lo descrito en este Anexo es obligatorio para el funcionamiento de un Plug-in para Clowds. Son recomendaciones para facilitar su desarrollo.</em></p>
+<p>Se sugiere que el nombre de la clase principal guarde relación con el nombre del servicio que se va a implementar. De aquí en adelante la llamaremos myCloud.</p>
 <div class="section" id="qstring-accesstoken">
 <h2>QString accessToken<a class="headerlink" href="#qstring-accesstoken" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Access Token</strong></p>
-<p>En caso de utilizar OAuth2, puede ser útil guardar en esta variable el
-access token, ya que lo más normal es que tengas que introducirlo en
-cada petición HTTP para la autorización.</p>
+<p><em>Access Token</em></p>
+<p>En caso de utilizar OAuth2, puede ser útil guardar en esta variable el access token, ya que lo más normal es que tengas que introducirlo en cada petición HTTP para la autorización.</p>
 </div>
 <div class="section" id="qstring-nextchanges">
 <h2>QString nextChanges<a class="headerlink" href="#qstring-nextchanges" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Marcador de eventos</strong></p>
-<p>Generalmente el servicio debe ponernos a disposición alguna forma de
-recibir los cambios desde un punto en concreto. En esta variable debemos
-guardar cada vez que hay cambios la última posición de los mismos, para
-tener un orden. Este valor debe registrarse además en la base de datos
-para guardar la posición al cerrar el programa y la volvemos a recuperar
-de la base de datos al iniciar de nuevo el programa.</p>
-<p><code class="docutils literal"><span class="pre">resources_-&gt;settingsSetValue(QString</span> <span class="pre">key,</span> <span class="pre">QString</span> <span class="pre">value);</span></code></p>
+<p><em>Marcador de eventos</em></p>
+<p>Generalmente el servicio debe ponernos a disposición alguna forma de recibir los cambios desde un punto en concreto. En esta variable debemos guardar cada vez que hay cambios la última posición de los mismos, para tener un orden. Este valor debe registrarse además en la base de datos para guardar la posición al cerrar el programa y la volvemos a recuperar de la base de datos al iniciar de nuevo el programa.</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">resources_</span><span class="o">-&gt;</span><span class="n">settingsSetValue</span><span class="p">(</span><span class="n">QString</span> <span class="n">key</span><span class="p">,</span> <span class="n">QString</span> <span class="n">value</span><span class="p">);</span>
+</pre></div>
 </div>
-<div class="section" id="qhash-allevents">
-<h2>QHash  allEvents<a class="headerlink" href="#qhash-allevents" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Lista de todos los eventos</strong></p>
-<p>En esta lista se almacenarán temporalmente (sin importar su contenido)
-todos los cambios que reciba Clowds en cada llamada a getChanges().</p>
-<ul class="simple">
-<li>Clave: ID del evento.</li>
-<li>Valor: Objeto Change, con el QJsonObject entero del evento.</li>
-</ul>
+<p><strong>QString key</strong> -&gt; En este caso seria &#8220;token&#8221; , &#8220;cursor&#8221; o por el estilo</p>
+<p><strong>QString value</strong> -&gt; Esto sería el valor que nos de el servicio, generalmente una cadena alfanumérica muy larga.</p>
 </div>
-<div class="section" id="qhash-mychanges">
-<h2>QHash &gt; myChanges<a class="headerlink" href="#qhash-mychanges" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Lista de todos los cambios por cada archivo</strong></p>
-<p>Este QHash es el que retorna getChanges(). De todos los eventos de
-allEvents, solo se insertarán en myChanges aquellos eventos que sean
-cambios válidos para Clowds (Insertar, modificar, borrar, mover,
-restaurar de la papelera…). Eventos como marcar un archivo como
-favorito, añadir o quitar etiquetas, son eventos inservibles para
-Clowds.</p>
-<p>Guardará de cada archivo, un QMap con todos sus cambios, indexados por
-fecha (recomendable UNIX Time Stamp) para ordenarlos cronológicamente.</p>
-<div class="line-block">
-<div class="line">Clave: ID del archivo. Valor: QMap</div>
-<div class="line">{ Clave: Fecha (UNIX Time Stamp). Valor: Objeto Change. }.</div>
+<div class="section" id="qhash-qstring-change-allevents">
+<span id="id2"></span><h2>QHash&lt;QString, Change&gt; allEvents<a class="headerlink" href="#qhash-qstring-change-allevents" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de todos los eventos</em></p>
+<p>En esta lista se almacenarán temporalmente (sin importar su contenido) todos los cambios que reciba Clowds en cada llamada a getChanges().</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td>Change</td>
+</tr>
+<tr class="row-odd"><td>ID del
+evento</td>
+<td>Objeto Change
+QJsonObject entero
+del evento</td>
+</tr>
+</tbody>
+</table>
 </div>
+<div class="section" id="qhash-qstring-qmap-uint-change-mychanges">
+<span id="id3"></span><h2>QHash&lt;QString, QMap&lt;uint, Change&gt; &gt; myChanges<a class="headerlink" href="#qhash-qstring-qmap-uint-change-mychanges" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de todos los cambios por cada archivo</em></p>
+<p>Este <cite>QHash</cite> es el que retorna getChanges(). De todos los eventos de allEvents, solo se insertarán en myChanges aquellos eventos que sean cambios válidos para Clowds (Insertar, modificar, borrar, mover, restaurar de la papelera…). Eventos como marcar un archivo como favorito, añadir o quitar etiquetas, son eventos inservibles para Clowds.</p>
+<p>Guardará de cada archivo, un QMap con todos sus cambios, indexados por fecha (recomendable UNIX Time Stamp) para ordenarlos cronológicamente.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="34%" />
+<col width="34%" />
+<col width="31%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head" colspan="2">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td colspan="2">QMap&lt;uint, Change&gt;</td>
+</tr>
+<tr class="row-odd"><td rowspan="2">&nbsp;</td>
+<td>uint</td>
+<td>Change</td>
+</tr>
+<tr class="row-even"><td>Fecha
+(UNIX Time
+Stamp)</td>
+<td>Objeto
+Change</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="section" id="qhash-filesbyid">
-<h2>QHash filesById<a class="headerlink" href="#qhash-filesbyid" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Lista de archivos indexada por ID</strong></p>
-<p>En este QHash se irán insertando los archivos que se vayan descargando o
-creando en la nube indexados por el ID del archivo, para poder tener un
-registro de todos los archivos que tenemos almacenados, y así poder
-conseguir información de cada uno de ellos en cualquier momento.</p>
-<ul class="simple">
-<li>Clave: ID del archivo [File::getId()]</li>
-<li>Valor: Archivo [File]</li>
-</ul>
+<div class="section" id="qhash-qstring-file-filesbyid">
+<span id="id4"></span><h2>QHash&lt;QString, File&gt; filesById<a class="headerlink" href="#qhash-qstring-file-filesbyid" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de archivos indexada por ID</em></p>
+<p>En este QHash se irán insertando los archivos que se vayan descargando o creando en la nube indexados por el ID del archivo, para poder tener un registro de todos los archivos que tenemos almacenados, y así poder conseguir información de cada uno de ellos en cualquier momento.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td>File</td>
+</tr>
+<tr class="row-odd"><td>ID del
+archivo
+<cite>File::getId()</cite></td>
+<td>Archivo</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="section" id="qhash-filesbypath">
-<h2>QHash filesByPath<a class="headerlink" href="#qhash-filesbypath" title="Enlazar permanentemente con este título">¶</a></h2>
-<p><strong>Lista de archivos indexada por la ruta del archivo</strong></p>
-<p>En este QHash se irán insertando los archivos que se vayan descargando o
-creando en la nube indexados por la ruta (path) del archivo, para poder
-tener un registro de todos los archivos que tenemos almacenados, y así
-poder conseguir información de cada uno de ellos en cualquier momento.</p>
-<ul class="simple">
-<li>Clave: Ruta del archivo [File::getPath()]</li>
-<li>Valor: Archivo [File]</li>
-</ul>
+<div class="section" id="qhash-qstring-file-filesbypath">
+<span id="id5"></span><h2>QHash&lt;QString, File&gt; filesByPath<a class="headerlink" href="#qhash-qstring-file-filesbypath" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de archivos indexada por la ruta del archivo</em></p>
+<p>En este QHash se irán insertando los archivos que se vayan descargando o creando en la nube indexados por la ruta (path) del archivo, para poder tener un registro de todos los archivos que tenemos almacenados, y así poder conseguir información de cada uno de ellos en cualquier momento.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="41%" />
+<col width="59%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td>File</td>
+</tr>
+<tr class="row-odd"><td>Ruta del
+archivo
+<cite>File::getPath()</cite></td>
+<td>Archivo</td>
+</tr>
+</tbody>
+</table>
 </div>
-<div class="section" id="qhash-qstring-qlist-clouds">
-<h2>QHash&lt;QString, QList&lt;CloudS<a class="headerlink" href="#qhash-qstring-qlist-clouds" title="Enlazar permanentemente con este título">¶</a></h2>
+<div class="section" id="qhash-qstring-qlist-cloudstoragechange-clowdschanges">
+<span id="id6"></span><h2>QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChanges<a class="headerlink" href="#qhash-qstring-qlist-cloudstoragechange-clowdschanges" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de los cambios que se harán efectivos</em></p>
+<p>Este QHash es el que devolveremos en getChanges() al finalizar de procesar todos los cambios que encuentre Clowds.</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td>QList&lt;CloudStorageChange&gt;</td>
+</tr>
+<tr class="row-odd"><td>Ruta del archivo
+que sufre el
+cambio</td>
+<td>Lista de cambios
+CloudStorageChange</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="qhash-qstring-qlist-cloudstoragechange-clowdschangesbyid">
+<span id="id7"></span><h2>QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChangesById<a class="headerlink" href="#qhash-qstring-qlist-cloudstoragechange-clowdschangesbyid" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Lista de los cambios que se harán efectivos indexada por ID</em></p>
+<p>Este QHash es igual que ClowdsChanges, salvo que está indexado por ID del archivo. Esto sirve para evitar conflictos en caso de que se repitan las rutas, debido a que ClowdsChanges va indexado por la ruta del archivo (Podrían solaparse o anularse los cambios, así como repetirse archivos, y otras situaciones).</p>
+<table border="1" class="docutils">
+<colgroup>
+<col width="38%" />
+<col width="62%" />
+</colgroup>
+<thead valign="bottom">
+<tr class="row-odd"><th class="head">Clave</th>
+<th class="head">Valor</th>
+</tr>
+</thead>
+<tbody valign="top">
+<tr class="row-even"><td>QString</td>
+<td>QList&lt;CloudStorageChange&gt;</td>
+</tr>
+<tr class="row-odd"><td>ID del archivo
+que sufre el
+cambio</td>
+<td>Lista de cambios
+CloudStorageChange</td>
+</tr>
+</tbody>
+</table>
+</div>
+<div class="section" id="bool-updateparentsof-file-file">
+<span id="id8"></span><h2>bool updateParentsOf(File &amp;file)<a class="headerlink" href="#bool-updateparentsof-file-file" title="Enlazar permanentemente con este título">¶</a></h2>
+<p><em>Construye el path en local mediante el id y el parent id del &#8216;file&#8217; que recibe</em></p>
+<p>Esta función se usa en caso de que el servicio no dé información acerca del path o el path no esté como Clowds lo pide. Por cada &#8216;file&#8217; que reciba esta función lo que hace es construir el path del &#8216;file&#8217; mediante el id y el parent id, todo ello en un bucle que va obteniendo el nombre (title) de dicho id y el del parent id hasta llegar a root que en ese punto se sale del bucle. El resultado lo va insertando en el path de dicho &#8216;file&#8217; y una vez obtenido, en filesByPath inserta el path y el &#8216;file&#8217; y devuelve &#8216;true&#8217; si la operación se ha hecho correctamente, por lo contrario &#8216;false&#8217;.</p>
+<blockquote>
+<div>Párametro: Objeto File.</div></blockquote>
 </div>
 </div>
 

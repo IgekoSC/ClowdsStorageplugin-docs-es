@@ -73,9 +73,14 @@
 </ul>
 </li>
 <li class="toctree-l1 current"><a class="current reference internal" href="">Lista de Funciones</a><ul>
-<li class="toctree-l2"><a class="reference internal" href="#getchanges">getChanges()</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#downloadfile-qstring-remotepath-qstring-localpath">downloadFile(QString remotePath, QString localPath)</a></li>
-<li class="toctree-l2"><a class="reference internal" href="#uploadfile-qstring-remotepath-qstring-localpath">uploadFile(QString remotePath, QString localPath)</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#getchanges">getChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#downloadfile">downloadFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#uploadfile">uploadFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#movefile">moveFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#movedir">moveDir</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rmfile">rmFile</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#mkdir">mkDir</a></li>
+<li class="toctree-l2"><a class="reference internal" href="#rmdir">rmDir</a></li>
 </ul>
 </li>
 <li class="toctree-l1"><a class="reference internal" href="Anexo1.html">Anexo 1. Clases recomendables</a><ul>
@@ -88,11 +93,13 @@
 <li class="toctree-l1"><a class="reference internal" href="Anexo2.html">Anexo 2. Clase principal: campos y métodos útiles</a><ul>
 <li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qstring-accesstoken">QString accessToken</a></li>
 <li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qstring-nextchanges">QString nextChanges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-allevents">QHash  allEvents</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-mychanges">QHash &gt; myChanges</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-filesbyid">QHash filesById</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-filesbypath">QHash filesByPath</a></li>
-<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-qlist-clouds">QHash&lt;QString, QList&lt;CloudS</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-change-allevents">QHash&lt;QString, Change&gt; allEvents</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-qmap-uint-change-mychanges">QHash&lt;QString, QMap&lt;uint, Change&gt; &gt; myChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-file-filesbyid">QHash&lt;QString, File&gt; filesById</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-file-filesbypath">QHash&lt;QString, File&gt; filesByPath</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-qlist-cloudstoragechange-clowdschanges">QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChanges</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#qhash-qstring-qlist-cloudstoragechange-clowdschangesbyid">QHash&lt;QString, QList&lt;CloudStorageChange&gt; &gt; ClowdsChangesById</a></li>
+<li class="toctree-l2"><a class="reference internal" href="Anexo2.html#bool-updateparentsof-file-file">bool updateParentsOf(File &amp;file)</a></li>
 </ul>
 </li>
 </ul>
@@ -131,62 +138,173 @@
           <div role="main" class="document">
             
   <div class="section" id="lista-de-funciones">
-<h1>Lista de Funciones<a class="headerlink" href="#lista-de-funciones" title="Enlazar permanentemente con este título">¶</a></h1>
+<span id="id1"></span><h1>Lista de Funciones<a class="headerlink" href="#lista-de-funciones" title="Enlazar permanentemente con este título">¶</a></h1>
+<p>La siguiente lista comprende las funciones mínimas que se necesitan implementar para que el plugin pueda comunicarse con Clowds y que este pueda sincronizar con el servicio en la nube que quiera implementar.</p>
 <div class="section" id="getchanges">
-<h2>getChanges()<a class="headerlink" href="#getchanges" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Esta es la función principal del Plug-in, la más importante, y
-normalmente la que más código dedica. Su cometido es el de recibir
-información de los sucesos de la nube, procesar esos eventos, y
-traducirlos en cambios de Clowds (CloudStorageChange), para que el
-programa sepa qué hacer con ellos. Devuelve un
-<code class="docutils literal"><span class="pre">QHash&lt;QString,</span> <span class="pre">QList&lt;CloudStorageChange&gt;</span> <span class="pre">&gt;</span></code></p>
-<p>el cual contendrá un registro de los cambios que se van a realizar. La
-clave será la ruta del fichero en <code class="docutils literal"><span class="pre">Qstring</span></code>, y su valor un
-<code class="docutils literal"><span class="pre">CloudStorageChange</span></code>, que es el cambio que ha sufrido.</p>
-<p>El primer paso será hacer la petición HTTP para obtener la lista de los
-eventos ocurridos en la nube e ir guardándolos en un QHash, por ejemplo
-allEvents (ver <a class="reference external" href="Anexo2">ANEXO 2</a>). Lo importante es que el QHash almacene los
-metadatos (normalmente en JSON).</p>
-<p>En el caso de que la nube pueda devolver más de un cambio por archivo,
-una buena manera de tratar esta lista de cambios sería hacer otro QHash,
-como myChanges (Ver ANEXO 2), en el que en cada valor almacene un QMap.
-Este QMap sería una lista de los eventos (metadatos), indexada por
-fecha.</p>
-<p><code class="docutils literal"><span class="pre">QHash</span> <span class="pre">&lt;</span> <span class="pre">file_ID,</span> <span class="pre">QMap&lt;fecha,</span> <span class="pre">evento&gt;</span> <span class="pre">&gt;</span></code></p>
-<p>Con esto se conseguirá que por cada fichero haya una lista de todos sus
-cambios ordenados cronológicamente.</p>
-<p>La mecánica será recorrer todos esos cambios ordenados por fecha para ir
-procesando por cada fichero sus cambios uno a uno, del más antiguo al
-más reciente. Según los metadatos de cada evento, debemos ir asignando
-las ‘Flags’ en función de qué clase de evento se trate: subir o crear es
-‘New’, renombrar o mover es ‘Moved’, etc.</p>
+<h2>getChanges<a class="headerlink" href="#getchanges" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Esta es la función principal del Plug-in, la más importante, y normalmente la que más código dedica. Su cometido es el de recibir información de los sucesos de la nube, procesar esos eventos, y traducirlos en cambios de Clowds (CloudStorageChange), para que el programa sepa qué hacer con ellos.</p>
+<p>Devuelve un</p>
+<blockquote>
+<div><code class="code cpp c++ docutils literal"><span class="name"><span class="pre">QHash</span></span> <span class="operator"><span class="pre">&lt;</span></span><span class="name"><span class="pre">QString</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QList</span></span><span class="operator"><span class="pre">&lt;</span></span><span class="name"><span class="pre">CloudStorageChange</span></span><span class="operator"><span class="pre">&gt;</span></span> <span class="operator"><span class="pre">&gt;</span></span></code></div></blockquote>
+<p>el cual contendrá un registro de los cambios que se van a realizar. La clave será la ruta del fichero en <cite>QString</cite>, y su valor un <cite>CloudStorageChange</cite>, que es el cambio que ha sufrido.</p>
+<p>El primer paso será hacer la petición HTTP para obtener la lista de los eventos ocurridos en la nube e ir guardándolos en un <cite>QHash</cite>, por ejemplo <cite>allEvents</cite> (ver <a class="reference internal" href="Anexo2.html#qhash-qstring-change-allevents"><span>Anexo 2</span></a>). Lo importante es que el <cite>QHash</cite> almacene los metadatos (normalmente en JSON).</p>
+<p>En el caso de que la nube pueda devolver más de un cambio por archivo, una buena manera de tratar esta lista de cambios sería hacer otro <cite>QHash</cite>, como <cite>myChanges</cite> (ver <a class="reference internal" href="Anexo2.html#qhash-qstring-qmap-uint-change-mychanges"><span>Anexo 2</span></a>), donde cada valor corresponde a un QMap. Dicho QMap sería una lista de1 los eventos (metadatos), indexada por fecha.</p>
+<blockquote>
+<div><code class="code cpp c++ docutils literal"><span class="name"><span class="pre">QHash</span></span> <span class="operator"><span class="pre">&lt;</span></span> <span class="name"><span class="pre">file_ID</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QMap</span></span><span class="operator"><span class="pre">&lt;</span></span><span class="name"><span class="pre">fecha</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">evento</span></span><span class="operator"><span class="pre">&gt;</span></span> <span class="operator"><span class="pre">&gt;</span></span></code></div></blockquote>
+<p>Con esto se conseguirá que por cada fichero haya una lista de todos sus cambios ordenados cronológicamente.</p>
+<p>La mecánica será recorrer todos esos cambios ordenados por fecha para ir procesando por cada fichero sus cambios uno a uno, del más antiguo al más reciente. Según los metadatos de cada evento, debemos ir asignando las &#8216;Flags&#8217; en función de que clase de evento se trate: subir o crear es &#8216;New&#8217;, renombrar o mover es &#8216;Moved&#8217;, etc.</p>
 </div>
-<div class="section" id="downloadfile-qstring-remotepath-qstring-localpath">
-<h2>downloadFile(QString remotePath, QString localPath)<a class="headerlink" href="#downloadfile-qstring-remotepath-qstring-localpath" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Esta función descarga desde la nube cada archivo que Clowds considere
-que debe descargar al sincronizar.</p>
-<p>Aquí sólo debes preocuparte de introducir la petición HTTP que requiera
-el sistema que estemos implementando para hacer la descarga de un sólo
-archivo.</p>
-<p>Hay que tener en cuenta que cada vez que Clowds ejecute la función,
-pasará por parámetro las variables remotePath y localPath. Generalmente
-son iguales, salvo que el sistema con el que estemos trabajando cifre
-los directorios. En ese caso, remotePath estará cifrada. El único
-momento en el que se ha de utilizar localPath, es cuando le indicamos la
-ruta de descarga. Para descargar el archivo: resources_-&gt;shrGet(QUrl,
-QFile); QUrl - URL de la petición. QFile - El archivo que se descargará
-en la carpeta de sincronización. Dependiendo del sistema con el que
-estemos trabajando, es posible que se requieran cabeceras, o parámetros
-en la URL.</p>
+<div class="section" id="downloadfile">
+<h2>downloadFile<a class="headerlink" href="#downloadfile" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Esta función descarga desde la nube cada archivo que Clowds considere que debe descargar al sincronizar.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><p><strong>remotePath</strong> - Ruta remota del fichero.</p>
+<p><strong>localPath</strong> - Ruta del fichero en el sistema de archivos local.</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>no</strong> está activado, remotePath y localPath serán iguales.</p>
 </div>
-<div class="section" id="uploadfile-qstring-remotepath-qstring-localpath">
-<h2>uploadFile(QString remotePath, QString localPath)<a class="headerlink" href="#uploadfile-qstring-remotepath-qstring-localpath" title="Enlazar permanentemente con este título">¶</a></h2>
-<p>Esta función se encarga de subir los archivos que Clowds detecte como
-‘new’ en la carpeta de sincronización. Al sincronizar Clowds, se
-encargará de subir a la nube los archivos creados en local.</p>
-<p>Recordemos que cada vez que Clowds ejecute la función, pasará por
-parámetro las variables remotePath y localPath. Generalmente son
-iguales, salvo que el sistema con el que estemos</p>
+<p>Aquí sólo debes preocuparte de introducir la petición HTTP que requiera el sistema que estemos implementando para hacer la descarga de un sólo archivo.</p>
+<p>Para descargar el archivo:</p>
+<blockquote>
+<div><p><code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources_</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">QUrl</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QFile</span></span><span class="punctuation"><span class="pre">);</span></span></code></p>
+<p><strong>QUrl</strong> - URL de la petición.</p>
+<p><strong>QFile</strong> - El archivo que se descargará en la carpeta de sincronización.</p>
+</div></blockquote>
+<p>Dependiendo del sistema con el que estemos trabajando, es posible que se requieran cabeceras, o parámetros en la URL.</p>
+</div>
+<div class="section" id="uploadfile">
+<h2>uploadFile<a class="headerlink" href="#uploadfile" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Esta función se encarga de subir los archivos que Clowds detecte como &#8216;new&#8217;  en la carpeta de sincronización. Al sincronizar Clowds, se encargará de subir a la nube los archivos creados en local.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><p><strong>remotePath</strong> - Ruta remota del fichero.</p>
+<p><strong>localPath</strong> - Ruta del fichero en el sistema de archivos local.</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>no</strong> está activado, remotePath y localPath serán iguales. Siempre usar remotepath con la url del endpoint del servicio y localPath como paramétro para abrir el fichero local para leer su contenido</p>
+</div>
+<p>Normalmente, los archivos se suben mediante Multipart-POST o PUT (véase la documentación de cada servicio).</p>
+<blockquote>
+<div><p><code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">QUrl</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QMap</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QFile</span></span><span class="punctuation"><span class="pre">);</span></span></code></p>
+<p><strong>QUrl</strong> - URL de la petición HTTP POST para subir un fichero.</p>
+<p><strong>QMap</strong> - Parámetros que pueda requerir la petición HTTP, normalmente datos sobre el fichero que va a ser subido.</p>
+<p><strong>QFile</strong> - Archivo a subir.</p>
+</div></blockquote>
+<p>Si el servicio en la nube requiere el uso del verbo PUT para subir archivos, puede usar la implementación que Clowds suministra:</p>
+<blockquote>
+<div><p><code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPut</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">QUrl</span></span> <span class="name"><span class="pre">url</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">QFile</span></span> <span class="operator"><span class="pre">*</span></span><span class="name"><span class="pre">localFile</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">qint64</span></span> <span class="name"><span class="pre">chunkIndex</span></span> <span class="operator"><span class="pre">=</span></span> <span class="operator"><span class="pre">-</span></span><span class="literal number integer"><span class="pre">1</span></span><span class="punctuation"><span class="pre">,</span></span> <span class="name"><span class="pre">qint64</span></span> <span class="name"><span class="pre">chunkSize</span></span> <span class="operator"><span class="pre">=</span></span> <span class="literal number integer"><span class="pre">10485760</span></span><span class="punctuation"><span class="pre">);</span></span></code></p>
+<p><strong>QUrl</strong> - URL de la petición HTTP PUT para subir un fichero.</p>
+<p><strong>QFile</strong> - Archivo a subir.</p>
+<p><strong>qint64 chunkIndex</strong> - Número del chunk de fichero a partir del cual hay que subir al servicio en la nube</p>
+<p><strong>qint64 chunkSize</strong> - Tamaño de cada uno de los chunk del fichero.</p>
+</div></blockquote>
+</div>
+<div class="section" id="movefile">
+<h2>moveFile<a class="headerlink" href="#movefile" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Mueve un archivo en la nube que había sido movido en la carpeta de sincronización.</p>
+<p>Parámetros:</p>
+<p>from - ruta local anterior del archivo.</p>
+<p>to - ruta local nueva del archivo.</p>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>no</strong> está activado, remotePath y localPath serán iguales. Siempre usar remotepath con la url del endpoint del servicio y localPath como paramétro para abrir el fichero local para leer su contenido</p>
+</div>
+<p>Hacer la petición HTTP correspondiente. Si no hay una petición exclusiva para mover un archivo, normalmente se hace actualizando la información del archivo, cambiando su padre (posiblemente el ID del padre).</p>
+<p><strong>GET</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>POST</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>Otro verbo</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrSendCustomRequest</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p>Se podría guardar el resultado de esta petición en un <cite>QByteArray</cite> para confirmar que se ha movido el archivo:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">QByteArray</span> <span class="n">result</span> <span class="o">=</span> <span class="n">resources</span><span class="o">-&gt;</span><span class="n">shrSendCustomRequest</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>En caso de que se haya realizado con éxito devolver true; en otro caso, false.</p>
+</div>
+<div class="section" id="movedir">
+<h2>moveDir<a class="headerlink" href="#movedir" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Mueve un directorio en la nube que había sido movido en la carpeta de sincronización.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><p><strong>from</strong> - ruta local anterior del directorio.</p>
+<p><strong>to</strong> - ruta local nueva del directorio.</p>
+</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>está</strong> activado, tanto el <em>from</em> como el <em>to</em> estarán cifrados.</p>
+</div>
+<p>Hacer la petición HTTP correspondiente. Si no hay una petición exclusiva para mover un directorio, normalmente se hace actualizando la información del archivo, cambiando su padre (posiblemente el ID del padre).</p>
+<p><strong>GET</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>POST</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>Otro verbo</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrSendCustomRequest</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p>Nos puede interesar guardar el resultado de esta petición en un <cite>QByteArray</cite> para confirmar que se ha movido el directorio:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">QByteArray</span> <span class="n">result</span> <span class="o">=</span> <span class="n">resources</span><span class="o">-&gt;</span><span class="n">shrSendCustomRequest</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>En caso de que se haya realizado con éxito devolver true; en otro caso, false.</p>
+</div>
+<div class="section" id="rmfile">
+<h2>rmFile<a class="headerlink" href="#rmfile" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Borra un archivo en la nube que ha sido borrado en la carpeta de sincronización. La mayoría de servicios por defecto lo envían a la papelera. Siempre que tengamos la posibilidad, se recomienda usar la papelera para eliminar archivos, en vez de borrarlos directamente, para no poner en riesgo los archivos importantes de los usuarios.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><strong>path</strong> - La ruta del archivo local que ha sido eliminado.</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>está</strong> activado, esta ruta estará cifrado.</p>
+</div>
+<p>Hacer la petición HTTP correspondiente, usando una de estas funciones, según el caso:</p>
+<p><strong>GET</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>POST</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>Otro verbo</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrSendCustomRequest</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p>Generalmente, se usa el verbo DELETE para borrar archivos. Por ejemplo:</p>
+<div class="highlight-cpp"><div class="highlight"><pre>resources_-&gt;shrSendCustomRequest(“DELETE”, QUrl(http://www.example.org/endpoint));
+</pre></div>
+</div>
+<p>Nos puede interesar guardar el resultado de esta petición en un <cite>QByteArray</cite> para confirmar que se ha borrado el archivo:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">QByteArray</span> <span class="n">result</span> <span class="o">=</span> <span class="n">resources</span><span class="o">-&gt;</span><span class="n">shrSendCustomRequest</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>En caso de que se haya realizado con éxito devolver true; en otro caso, false.</p>
+<p>Es probable que necesites información del archivo a borrar, la cual podrás obtener a través de una estructura de datos propia, como <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">filesByPath</span></span><span class="punctuation"><span class="pre">.</span></span><span class="name"><span class="pre">value</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">path</span></span><span class="punctuation"><span class="pre">)</span></span></code> (ver <a class="reference internal" href="Anexo2.html#qhash-qstring-file-filesbypath"><span>Anexo 2</span></a>).</p>
+</div>
+<div class="section" id="mkdir">
+<h2>mkDir<a class="headerlink" href="#mkdir" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Crea los directorios nuevos detectados por Clowds en la nube.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><strong>path</strong> - La ruta del directorio local que ha sido creado.</div></blockquote>
+<div class="admonition note">
+<p class="first admonition-title">Nota</p>
+<p class="last">Si el cifrado <strong>está</strong> activado, esta ruta estará cifrada.</p>
+</div>
+<p>Hacer la petición HTTP correspondiente, usando una de estas funciones, según el caso:</p>
+<p><strong>GET</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>POST</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>Otro verbo</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrSendCustomRequest</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+</div>
+<div class="section" id="rmdir">
+<h2>rmDir<a class="headerlink" href="#rmdir" title="Enlazar permanentemente con este título">¶</a></h2>
+<p>Borra un directorio en la nube que ha sido borrado en la carpeta de sincronización, la mayoría de servicios por defecto lo envían a la papelera.</p>
+<p>Parámetros:</p>
+<blockquote>
+<div><strong>path</strong> - La ruta del directorio local que ha sido eliminado.</div></blockquote>
+<p>Hacer la petición HTTP correspondiente, usando una de estas funciones, según el caso:</p>
+<p><strong>GET</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrGet</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>POST</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrPost</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p><strong>Otro verbo</strong> → <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">resources</span></span><span class="operator"><span class="pre">-&gt;</span></span><span class="name"><span class="pre">shrSendCustomRequest</span></span><span class="punctuation"><span class="pre">();</span></span></code></p>
+<p>Generalmente, se usa el verbo DELETE para borrar archivos. Por ejemplo:</p>
+<div class="highlight-cpp"><div class="highlight"><pre>resources_-&gt;shrSendCustomRequest(“DELETE”, QUrl(http://www.example.org/endpoint));
+</pre></div>
+</div>
+<p>Nos puede interesar guardar el resultado de esta petición en un <cite>QByteArray</cite> para confirmar que se ha borrado el directorio:</p>
+<div class="highlight-cpp"><div class="highlight"><pre><span class="n">QByteArray</span> <span class="n">result</span> <span class="o">=</span> <span class="n">resources</span><span class="o">-&gt;</span><span class="n">shrSendCustomRequest</span><span class="p">();</span>
+</pre></div>
+</div>
+<p>En caso de que se haya realizado con éxito devolver true; en otro caso, false.</p>
+<p>Es probable que necesites información del directorio a borrar, la cual podrás obtener a través de una estructura de datos propia, como <code class="code cpp c++ docutils literal"><span class="name"><span class="pre">filesByPath</span></span><span class="punctuation"><span class="pre">.</span></span><span class="name"><span class="pre">value</span></span><span class="punctuation"><span class="pre">(</span></span><span class="name"><span class="pre">path</span></span><span class="punctuation"><span class="pre">)</span></span></code> (ver <a class="reference internal" href="Anexo2.html#qhash-qstring-file-filesbypath"><span>Anexo 2</span></a>).</p>
 </div>
 </div>
 
